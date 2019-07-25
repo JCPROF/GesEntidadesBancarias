@@ -7,6 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Repository;
+using Serilog;
+using System;
 using System.Text;
 
 namespace GesEntidadesBancarias.Extensions
@@ -63,5 +65,18 @@ namespace GesEntidadesBancarias.Extensions
 					};
 				});
 		}
+
+		public static IServiceCollection AddSerilogServices(
+			this IServiceCollection services)
+		{
+			Log.Logger = new LoggerConfiguration()
+				.MinimumLevel.Verbose()
+				.WriteTo.Console()
+				.CreateLogger();
+			AppDomain.CurrentDomain.ProcessExit += (s, e) => Log.CloseAndFlush();
+			return services.AddSingleton(Log.Logger);
+		}
+
+
 	}
 }

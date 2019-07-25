@@ -42,20 +42,11 @@ namespace Repository
 
 		public async Task CreateBankEntityAsync(BankDTO bankDTO)
 		{
-			try
-			{
 				BankEntity bankEntity = new BankEntity();
 				bankEntity.MapToBankEntity(bankDTO);
 				bankEntity.GroupEntity = RepositoryContext.GroupEntities.Where(gr => gr.GroupEntityId.Equals(bankDTO.GroupId)).FirstOrDefault();
 				Create(bankEntity);
 				await SaveAsync();
-			}
-			catch (Exception ex)
-			{
-
-				throw ex;
-			}
-			
 		}
 
 		public async Task<BankDTO> GetBankByIdAsync(int bankId)
@@ -64,6 +55,14 @@ namespace Repository
 			var dto = new BankDTO();
 			dto.MapToBankDTO(ent);
 			return dto;
+		}
+
+		public async Task DeleteBankAsync(BankDTO bankDTO)
+		{
+			BankEntity bankEntity = new BankEntity();
+			bankEntity.MapToBankEntity(bankDTO);
+			Delete(bankEntity);
+			await SaveAsync();
 		}
 	}
 }

@@ -10,6 +10,7 @@ using Entities.Models;
 using Contracts;
 using Microsoft.AspNetCore.Cors;
 using Entities.DTOModels;
+using Serilog;
 
 namespace GesEntidadesBancarias.Controllers
 {
@@ -18,10 +19,12 @@ namespace GesEntidadesBancarias.Controllers
 	public class BankEntitiesController : ControllerBase
     {
 		private readonly IRepositoryWrapper _repository;
+		private readonly ILogger _log;
 
-		public BankEntitiesController(IRepositoryWrapper repositoryWrapper)
+		public BankEntitiesController(IRepositoryWrapper repositoryWrapper, ILogger logger)
         {
 			_repository = repositoryWrapper;
+			_log = logger.ForContext<BankEntitiesController>();
         }
 
 		// GET: api/bankentity
@@ -41,7 +44,7 @@ namespace GesEntidadesBancarias.Controllers
 
 		//POST: api/bankentity
 		[HttpPost]
-		public async Task<ActionResult<BankEntity>> PostBankEntity([FromBody]BankDTO bankEntity)
+		public async Task<ActionResult> PostBankEntity([FromBody]BankDTO bankEntity)
 		{
 			try
 			{
@@ -55,14 +58,38 @@ namespace GesEntidadesBancarias.Controllers
 		}
 		[HttpGet("{id}")]
 		public async Task<ActionResult<BankDTO>> GetBankEntity(int id)
-		{
+		{ 
 			try
 			{
 				return await _repository.BankEntity.GetBankByIdAsync(id);
 			}
 			catch (Exception ex)
 			{
+				_log.Error(ex, ex.Message);
 				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpDelete]
+		public async Task<IActionResult> DeleteBank(int id)
+		{
+
+			try
+			{
+				var bank = await _repository.BankEntity.GetBankByIdAsync(id);
+				if (bank.IsEmptyOrNull())
+				{
+					return NotFound();
+				}
+				else {
+					await _repository.BankEntity.DeleteBankAsync(bank);
+					return NoContent();
+				}
+			}
+			catch (Exception ex)
+			{
+				_log.Error(ex, ex.Message);
+				return StatusCode(500, "Internal server error: "+ex.Message);
 			}
 		}
 	}

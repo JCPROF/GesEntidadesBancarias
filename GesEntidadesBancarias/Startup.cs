@@ -24,6 +24,7 @@ namespace GesEntidadesBancarias
 			services.ConfigureIISIntegration();
 			services.ConfigureSqlServerContext(Configuration);
 			services.ConfigureRepositoryWrapper();
+			services.AddSerilogServices();
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 		}
 

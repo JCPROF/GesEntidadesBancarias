@@ -38,5 +38,10 @@ namespace Entities.DTOModels
 			bankEntity.Provincia = bank.Provincia;
 			bankEntity.Telefono = bank.Telefono;
 		}
+
+		public static bool IsEmptyOrNull(this BankDTO bankDTO)
+		{
+			return bankDTO.BankEntityId < 1;
+		}
 	}
 }

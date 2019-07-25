@@ -12,5 +12,6 @@ namespace Contracts
 		Task<IEnumerable<BankDTO>> GetAllBankEntityAsync(string provincia , int codPostal);
 		Task CreateBankEntityAsync(BankDTO bankEntity);
 		Task<BankDTO> GetBankByIdAsync(int bankId);
+		Task DeleteBankAsync(BankDTO bank);
 	}
 }
